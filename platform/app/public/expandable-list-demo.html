@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Expandable list prototype</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-width: 320px; background: #111827; color: #f8fafc; }
+      main { width: min(100% - 32px, 390px); margin: 48px auto; }
+      .eyebrow { margin: 0 0 6px; color: #67e8f9; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+      h1 { margin: 0; font-size: 20px; }
+      .intro { margin: 8px 0 16px; color: #94a3b8; font-size: 12px; line-height: 1.5; }
+      .panel { overflow: visible; padding: 4px; border: 1px solid #334155; border-radius: 8px; background: #020617; box-shadow: 0 16px 40px #02061799; }
+      .item { border-bottom: 1px solid #1e293b; }
+      .item:last-child { border-bottom: 0; }
+      .row { display: flex; min-height: 56px; align-items: center; gap: 2px; border-radius: 4px; background: #020617; transition: background .15s ease; }
+      .row:hover, .row.selected { background: #1e293b; }
+      button { border: 0; font: inherit; cursor: pointer; }
+      .icon-button { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border-radius: 5px; background: transparent; color: #94a3b8; }
+      .icon-button:hover, .icon-button:focus-visible { outline: 2px solid #22d3ee; outline-offset: -2px; background: #334155; color: white; }
+      .chevron { width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform .18s ease, color .18s ease; }
+      .expanded .chevron { transform: rotate(45deg); color: #67e8f9; }
+      .label { min-width: 0; flex: 1; padding: 8px 4px; text-align: left; color: #f8fafc; background: transparent; }
+      .title { display: flex; gap: 6px; overflow: hidden; font-size: 13px; font-weight: 700; white-space: nowrap; }
+      .type { color: #67e8f9; }
+      .name { overflow: hidden; text-overflow: ellipsis; }
+      .meta { display: flex; gap: 7px; margin-top: 3px; color: #94a3b8; font-size: 11px; }
+      .subitems { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .18s ease; }
+      .expanded + .subitems { grid-template-rows: 1fr; }
+      .subitems-inner { overflow: hidden; margin-left: 37px; padding-left: 12px; border-left: 1px solid #0891b2aa; }
+      .subitem { display: block; width: 100%; padding: 7px 8px; border-radius: 4px; background: transparent; color: #cbd5e1; text-align: left; font-size: 12px; }
+      .subitem:hover, .subitem:focus-visible { outline: none; background: #1e293b; color: white; }
+      .dot { display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: #22d3ee; }
+      .menu-wrap { position: relative; flex: 0 0 34px; }
+      .menu { position: absolute; z-index: 2; top: 38px; right: 0; width: 142px; padding: 4px; border: 1px solid #475569; border-radius: 6px; background: #0f172a; box-shadow: 0 10px 24px #020617cc; }
+      .menu button { display: block; width: 100%; padding: 7px 8px; border-radius: 4px; background: transparent; color: #e2e8f0; text-align: left; font-size: 12px; }
+      .menu button:hover, .menu button:focus-visible { outline: none; background: #334155; }
+      .status { margin: 12px 0 0; color: #64748b; font-size: 11px; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Interaction prototype</p>
+      <h1>Segmentation list</h1>
+      <p class="intro">Chevron expands hierarchy. Row selects. Three dots opens actions.</p>
+      <section class="panel" aria-label="Expandable segmentation items">
+        <div class="item" data-name="Segmentation FOR1">
+          <div class="row selected">
+            <button class="icon-button toggle" aria-label="Expand Segmentation FOR1" aria-expanded="false"><span class="chevron"></span></button>
+            <button class="label select"><span class="title"><span class="type">SEG</span><span class="name">Segmentation FOR1</span></span><span class="meta"><span>S:100</span><span>▱ 1</span></span></button>
+            <div class="menu-wrap"><button class="icon-button menu-toggle" aria-label="Actions for Segmentation FOR1" aria-expanded="false">⋮</button><div class="menu" hidden><button>View details</button><button>Rename</button><button>Delete</button></div></div>
+          </div>
+          <div class="subitems"><div class="subitems-inner"><button class="subitem"><span class="dot"></span>Liver</button><button class="subitem"><span class="dot"></span>Tumor</button><button class="subitem"><span class="dot"></span>Vessel</button></div></div>
+        </div>
+        <div class="item" data-name="Segmentation FOR2">
+          <div class="row"><button class="icon-button toggle" aria-label="Expand Segmentation FOR2" aria-expanded="false"><span class="chevron"></span></button><button class="label select"><span class="title"><span class="type">SEG</span><span class="name">Segmentation FOR2</span></span><span class="meta"><span>S:100</span><span>▱ 1</span></span></button><div class="menu-wrap"><button class="icon-button menu-toggle" aria-label="Actions for Segmentation FOR2" aria-expanded="false">⋮</button><div class="menu" hidden><button>View details</button><button>Rename</button><button>Delete</button></div></div></div><div class="subitems"><div class="subitems-inner"><button class="subitem"><span class="dot"></span>Lung</button><button class="subitem"><span class="dot"></span>Nodule</button></div></div>
+        </div>
+        <div class="item" data-name="For 2 RTstruct"><div class="row"><button class="icon-button toggle" aria-label="Expand For 2 RTstruct" aria-expanded="false"><span class="chevron"></span></button><button class="label select"><span class="title"><span class="type">RTSTRUCT</span><span class="name">For 2 RTstruct</span></span><span class="meta"><span>S:1</span><span>▱ 1</span></span></button><div class="menu-wrap"><button class="icon-button menu-toggle" aria-label="Actions for For 2 RTstruct" aria-expanded="false">⋮</button><div class="menu" hidden><button>View details</button><button>Rename</button><button>Delete</button></div></div></div><div class="subitems"><div class="subitems-inner"><button class="subitem"><span class="dot"></span>Heart</button><button class="subitem"><span class="dot"></span>Spinal cord</button></div></div></div>
+      </section>
+      <p class="status" id="status">Selected: Segmentation FOR1</p>
+    </main>
+    <script>
+      const status = document.querySelector('#status');
+      document.querySelectorAll('.toggle').forEach(button => button.addEventListener('click', event => {
+        const item = event.currentTarget.closest('.item');
+        const expanded = item.querySelector('.row').classList.toggle('expanded');
+        event.currentTarget.setAttribute('aria-expanded', expanded);
+        event.currentTarget.setAttribute('aria-label', `${expanded ? 'Collapse' : 'Expand'} ${item.dataset.name}`);
+      }));
+      document.querySelectorAll('.select').forEach(button => button.addEventListener('click', event => {
+        document.querySelectorAll('.row').forEach(row => row.classList.remove('selected'));
+        const row = event.currentTarget.closest('.row');
+        row.classList.add('selected');
+        status.textContent = `Selected: ${event.currentTarget.closest('.item').dataset.name}`;
+      }));
+      document.querySelectorAll('.menu-toggle').forEach(button => button.addEventListener('click', event => {
+        const menu = event.currentTarget.nextElementSibling;
+        const isOpen = !menu.hidden;
+        document.querySelectorAll('.menu').forEach(other => { other.hidden = true; });
+        document.querySelectorAll('.menu-toggle').forEach(other => other.setAttribute('aria-expanded', 'false'));
+        menu.hidden = isOpen;
+        event.currentTarget.setAttribute('aria-expanded', String(!isOpen));
+      }));
+      document.addEventListener('click', event => { if (!event.target.closest('.menu-wrap')) document.querySelectorAll('.menu').forEach(menu => { menu.hidden = true; }); });
+    </script>
+  </body>
+</html>
